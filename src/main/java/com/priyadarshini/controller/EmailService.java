@@ -85,4 +85,31 @@ public class EmailService {
             e.printStackTrace();
         }
     }
+    
+    public void sendSponsorApprovalEmail(String toEmail, String businessName, String sponsorshipType) {
+        try {
+            jakarta.mail.internet.MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(toEmail);
+            helper.setSubject("Sponsorship Approved - Priyadarshini");
+
+            String htmlMsg = "<div style='font-family: \"Segoe UI\", Tahoma, sans-serif; background-color: #f4f4f4; padding: 40px 10px;'>"
+                    + "<div style='max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 40px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);'>"
+                    + "<h2 style='color: #D4AF37; margin-top: 0;'>Welcome, " + businessName + "!</h2>"
+                    + "<p style='font-size: 16px; color: #333;'>We are thrilled to officially welcome you as a <strong>" + sponsorshipType + "</strong> for the Priyadarshini Women's Event.</p>"
+                    + "<p style='font-size: 16px; color: #333;'>Your payment and details have been successfully verified by our team. Your business logo and profile are now live on our official sponsor directory.</p>"
+                    + "<p style='font-size: 16px; color: #333;'>Thank you for empowering business leaders with us.</p>"
+                    + "<div style='margin-top: 40px; padding-top: 20px; border-top: 1px solid #eeeeee;'>"
+                    + "<p style='margin: 0; font-size: 16px; font-weight: bold; color: #333;'>Sincerely,</p>"
+                    + "<p style='margin: 5px 0 0 0; font-size: 16px; color: #E83E8C; font-weight: 600;'>Priyadarshini Organizing Committee</p>"
+                    + "</div></div></div>";
+
+            helper.setText(htmlMsg, true);
+            mailSender.send(message);
+
+        } catch (Exception e) {
+            System.err.println("Failed to send sponsor email: " + e.getMessage());
+        }
+    }
 }

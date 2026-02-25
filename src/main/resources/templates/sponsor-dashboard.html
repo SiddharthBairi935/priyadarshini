@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sponsor Management - Priyadarshini</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #170A1C; color: #fff; padding: 40px 0; }
+        .glass-card { background: rgba(35, 15, 40, 0.8); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 16px; padding: 30px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); }
+        .table { color: #fff; }
+        .table th { color: #D4AF37; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
+        .table td { vertical-align: middle; }
+    </style>
+</head>
+<body>
+<div class="container-fluid px-5">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 style="color: #D4AF37; font-weight: 600; margin-bottom: 0;"><i class="fa-solid fa-crown"></i> VIP Sponsors</h2>
+            <p style="color: #a0aec0; margin-top: 5px;">Manage your corporate partners and brand assets.</p>
+        </div>
+        <div>
+            <a th:href="@{/admin/dashboard}" class="btn btn-outline-light me-2"><i class="fa-solid fa-users"></i> View Attendees</a>
+            <a th:href="@{/admin/logout}" class="btn btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="glass-card">
+        <div class="table-responsive">
+            <table class="table table-borderless table-hover align-middle">
+                <thead>
+                    <tr style="border-bottom: 2px solid rgba(212, 175, 55, 0.3);">
+                        <th>Sponsor ID</th>
+                        <th>Business & Contact</th>
+                        <th>Industry</th>
+                        <th>Sponsorship Tier</th>
+                        <th class="text-center">Brand Logo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="sponsor : ${sponsors}" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        
+                        <td style="font-family: monospace; color: #D4AF37;" th:text="${'SPN-' + sponsor.id}"></td>
+                        
+                        <td>
+                            <strong th:text="${sponsor.businessName}" style="color: #E83E8C; font-size: 1.1rem;"></strong><br>
+                            <small th:text="${sponsor.email}" style="color: #a0aec0;"></small><br>
+                            <small th:text="${sponsor.contactNumber}" style="color: #a0aec0;"></small>
+                        </td>
+                        
+                        <td th:text="${sponsor.businessType}"></td>
+                        
+                        <td>
+                            <span th:text="${sponsor.sponsorshipType}" style="background: rgba(212, 175, 55, 0.2); color: #D4AF37; padding: 5px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;"></span><br>
+                            <span style="color: #28a745; font-weight: 600; font-size: 0.9rem; margin-top: 5px; display: inline-block;" th:text="${'₹ ' + sponsor.amount}"></span>
+                        </td>
+                        
+                        <td class="text-center">
+                            <div th:if="${sponsor.logoBase64 != null and !sponsor.logoBase64.isEmpty()}">
+                                <img th:src="${sponsor.logoBase64}" alt="Logo" 
+                                     style="height: 40px; width: auto; max-width: 120px; object-fit: contain; background: white; padding: 4px; border-radius: 6px; cursor: pointer; border: 1px solid #D4AF37;" 
+                                     onclick="window.open(this.src)">
+                            </div>
+                            <div th:unless="${sponsor.logoBase64 != null and !sponsor.logoBase64.isEmpty()}">
+                                <span style="color: #666; font-size: 0.8rem;">No Logo</span>
+                            </div>
+                        </td>
+						
+						<td class="text-center">
+						                            <div th:if="${sponsor.approved}">
+						                                <span class="badge bg-success" style="font-size: 0.85rem; padding: 8px 12px; border-radius: 20px;"><i class="fa-solid fa-check-double"></i> Approved & Live</span>
+						                            </div>
+						                            <div th:unless="${sponsor.approved}">
+						                                <a th:href="@{/admin/sponsor/approve/{id}(id=${sponsor.id})}" 
+						                                   class="btn btn-warning btn-sm" 
+						                                   style="font-weight: 600; border-radius: 20px; padding: 5px 15px;"
+						                                   onclick="return confirm('Verify payment received before approving. This will send a confirmation email and make their logo public. Proceed?');">
+						                                    <i class="fa-solid fa-envelope-circle-check"></i> Approve & Email
+						                                </a>
+						                            </div>
+						                        </td>
+                        
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

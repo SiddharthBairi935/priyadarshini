@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sponsor Registration - Priyadarshini</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<style>
+	        body { font-family: 'Outfit', sans-serif; background-color: #170A1C; color: #fff; padding: 40px 0; }
+	        .glass-card { background: rgba(35, 15, 40, 0.8); border: 1px solid rgba(232, 62, 140, 0.2); border-radius: 16px; padding: 40px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); }
+	        .form-control, .form-select { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; border-radius: 8px; }
+	        .form-control:focus, .form-select:focus { background: rgba(255, 255, 255, 0.1); border-color: #E83E8C; color: #fff; box-shadow: 0 0 0 0.25rem rgba(232, 62, 140, 0.25); }
+	        .form-floating label { color: #a0aec0; }
+	        
+	        /* FIX ADDED HERE */
+	        select option { background-color: #170A1C; color: #fff; }
+
+	        .btn-glow { background: linear-gradient(45deg, #E83E8C, #D4AF37); border: none; color: white; padding: 12px 30px; border-radius: 30px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(232, 62, 140, 0.4); width: 100%; }
+	        .btn-glow:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6); color: white; }
+	        .section-title { color: #D4AF37; font-size: 1.2rem; font-weight: 600; margin: 30px 0 15px 0; border-bottom: 1px solid rgba(212, 175, 55, 0.3); padding-bottom: 5px; }
+	    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="glass-card">
+                
+                <div class="text-center mb-4">
+                    <img th:src="@{/images/logo.png}" alt="Priyadarshini Logo" style="max-height: 80px; margin-bottom: 15px;">
+                    <h2 style="color: #E83E8C; font-weight: 600;">Official Sponsor Registration</h2>
+                    <p style="color: #a0aec0;">Partner with us to empower business leaders.</p>
+                </div>
+
+                <form th:action="@{/sponsor-register}" th:object="${sponsor}" method="post">
+                    
+					<div class="section-title"><i class="fa-solid fa-handshake"></i> Sponsorship Details</div>
+					                    
+					                    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+					                    
+					                    <div class="row g-3">
+					                        <div class="col-12">
+					                            <div class="form-floating">
+					                                <select class="form-select" th:field="*{sponsorshipType}" id="sponsorTier" required>
+					                                    <option value="" selected disabled>-- Select Sponsorship Tier --</option>
+					                                    
+					                                    <option value="Title Sponsor" th:disabled="${!titleAvailable}" th:text="${titleAvailable ? 'Title Sponsor (₹ 50,000)' : 'Title Sponsor - SOLD OUT'}"></option>
+					                                    <option value="Co-Powered By" th:disabled="${!coPoweredAvailable}" th:text="${coPoweredAvailable ? 'Co-Powered By (₹ 30,000)' : 'Co-Powered By - SOLD OUT'}"></option>
+					                                    <option value="Sponsored By">Sponsored By (₹ 15,000)</option>
+					                                    
+					                                </select>
+					                                <label for="sponsorTier">Sponsorship Tier</label>
+					                            </div>
+					                        </div>
+					                    </div>
+
+                    <div class="section-title"><i class="fa-solid fa-building"></i> Business Information</div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" th:field="*{businessName}" id="bName" placeholder="Business Name" required />
+                                <label for="bName">Business Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" th:field="*{businessType}" id="bType" required>
+                                    <option value="" selected disabled>-- Select Type --</option>
+                                    <option value="IT / Technology">IT / Technology</option>
+                                    <option value="Retail / E-commerce">Retail / E-commerce</option>
+                                    <option value="Manufacturing">Manufacturing</option>
+                                    <option value="Healthcare / Wellness">Healthcare / Wellness</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Finance / Consulting">Finance / Consulting</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <label for="bType">Business Type</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" th:field="*{email}" id="email" placeholder="Email" required />
+                                <label for="email">Official Email</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="tel" class="form-control" th:field="*{contactNumber}" id="phone" placeholder="Phone" pattern="[0-9]{10}" maxlength="10" title="Please enter exactly 10 digits" required />
+                                <label for="phone">Contact Number (10 Digits)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-title"><i class="fa-solid fa-image"></i> Brand Assets</div>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label" style="color: #a0aec0; font-size: 0.9rem;">Upload High-Resolution Business Logo (PNG/JPG)</label>
+                            <input type="file" class="form-control" id="logoUpload" accept="image/png, image/jpeg, image/webp" required>
+                            <input type="hidden" th:field="*{logoBase64}" id="logoBase64Input">
+                        </div>
+                    </div>
+					
+					<div class="section-title"><i class="fa-solid fa-qrcode"></i> Payment Details</div>
+					                    <div class="row g-3">
+					                        <div class="col-12 text-center mb-3">
+					                            <p style="color: #F8BBD0; font-size: 0.95rem;">Please scan the QR code to pay your selected sponsorship amount, then upload the receipt below.</p>
+					                            
+					                            <img th:src="@{/images/qrcode.jpeg}" alt="Payment QR Code" 
+					                                 style="max-width: 200px; border-radius: 12px; border: 3px solid #D4AF37; padding: 10px; background: white; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);">
+					                        </div>
+					                        
+					                        <div class="col-md-6">
+					                            <div class="form-floating">
+					                                <input type="text" class="form-control" th:field="*{transactionId}" id="txnId" placeholder="Transaction ID" required />
+					                                <label for="txnId">Transaction / UTR ID</label>
+					                            </div>
+					                        </div>
+					                        
+					                        <div class="col-md-6">
+					                            <label class="form-label" style="color: #a0aec0; font-size: 0.9rem;">Upload Payment Screenshot</label>
+					                            <input type="file" class="form-control" id="paymentUpload" accept="image/png, image/jpeg, image/webp" required>
+					                            <input type="hidden" th:field="*{paymentScreenshotBase64}" id="paymentBase64Input">
+					                        </div>
+					                    </div>
+
+                    <div class="mt-5">
+                        <button type="submit" class="btn-glow">Submit Sponsorship Details</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('logoUpload').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Takes the image data and puts it into the hidden input for Spring Boot
+                document.getElementById('logoBase64Input').value = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+	// --- NEW: Payment Screenshot Script ---
+	    document.getElementById('paymentUpload').addEventListener('change', function(event) {
+	        const file = event.target.files[0];
+	        if (file) {
+	            const reader = new FileReader();
+	            reader.onload = function(e) {
+	                // Takes the payment image data and puts it into the hidden input
+	                document.getElementById('paymentBase64Input').value = e.target.result;
+	            };
+	            reader.readAsDataURL(file);
+	        }
+	    });
+</script>
+</body>
+</html>
