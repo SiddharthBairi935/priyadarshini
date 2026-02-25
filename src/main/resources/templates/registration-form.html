@@ -3,186 +3,334 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Event Registration</title>
+    <title>Priyadarshini Women's - Event Registration</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* --- EASY COLOR CUSTOMIZATION --- */
+        :root {
+            --primary-glow: #E83E8C;     
+            --secondary-glow: #6F42C1;   
+            --accent-gold: #D4AF37;      
+            --bg-color: #170A1C;         
+            --glass-bg: rgba(35, 15, 40, 0.65); 
+            --glass-border: rgba(232, 62, 140, 0.2); 
+            --text-main: #ffffff;
+            --text-muted: #F8BBD0;       
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            /* Beautiful modern gradient background */
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             min-height: 100vh;
             display: flex;
             align-items: center;
-            padding: 40px 0;
+            padding: 50px 0;
+            overflow-x: hidden;
+            position: relative;
         }
-        .registration-card {
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            padding: 40px;
+
+        /* --- Animated Background Orbs --- */
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            animation: float 12s infinite ease-in-out alternate;
         }
-        .form-title {
-            color: #333;
-            font-weight: 600;
+        .orb-1 { width: 400px; height: 400px; background: var(--primary-glow); top: -100px; left: -100px; opacity: 0.5; }
+        .orb-2 { width: 500px; height: 500px; background: var(--secondary-glow); bottom: -150px; right: -100px; animation-delay: -6s; opacity: 0.5; }
+        .orb-3 { width: 300px; height: 300px; background: var(--accent-gold); top: 40%; left: 30%; filter: blur(120px); animation-duration: 15s; opacity: 0.2; }
+
+        @keyframes float {
+            0% { transform: translateY(0px) scale(1); }
+            100% { transform: translateY(40px) scale(1.1); }
+        }
+
+        /* --- Glassmorphism Form Card --- */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-title {
+            font-weight: 800;
+            font-size: 2.5rem;
+            background: linear-gradient(to right, var(--accent-gold), var(--primary-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
             text-align: center;
-            margin-bottom: 30px;
         }
-        .section-header {
-            color: #764ba2;
-            font-size: 1.1rem;
+        
+        .header-subtitle { text-align: center; color: var(--text-muted); margin-bottom: 40px; font-weight: 300; }
+
+        .section-title {
+            font-size: 1.2rem;
             font-weight: 600;
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 8px;
-            margin-top: 25px;
-            margin-bottom: 20px;
-        }
-        .form-control, .form-select {
-            border-radius: 8px;
-            padding: 12px 15px;
-            border: 1px solid #ced4da;
-            transition: all 0.3s;
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-        .form-label {
-            font-weight: 500;
-            color: #555;
-            font-size: 0.95rem;
-        }
-        /* Dynamic Payment Section with Animation */
-        #paymentSection {
-            display: none;
-            background: #f8f9fc;
-            border: 2px dashed #667eea;
-            border-radius: 12px;
-            padding: 25px;
-            margin-top: 25px;
-            animation: slideDown 0.4s ease-out forwards;
-        }
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .qr-placeholder {
-            width: 160px;
-            height: 160px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            margin: 0 auto 15px auto;
+            color: var(--primary-glow);
+            margin: 30px 0 20px 0;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            gap: 10px;
         }
-        .btn-submit {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        /* --- Custom Inputs --- */
+        .form-floating .form-control, .form-floating .form-select {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-floating .form-control:focus, .form-floating .form-select:focus {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 15px rgba(232, 62, 140, 0.3);
+            color: var(--text-main);
+        }
+
+        .form-floating label { color: var(--text-muted); }
+        .form-floating .form-control:focus ~ label,
+        .form-floating .form-control:not(:placeholder-shown) ~ label {
+            color: var(--primary-glow);
+        }
+
+        option { background-color: #2D142C; color: white; }
+
+        /* --- Dynamic Payment Section --- */
+        #paymentSection {
+            display: none;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(232, 62, 140, 0.4);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 25px;
+            text-align: center;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .qr-wrapper {
+            background: white;
+            padding: 15px;
+            border-radius: 16px;
+            display: inline-block;
+            box-shadow: 0 0 30px rgba(232, 62, 140, 0.3);
+            margin-bottom: 20px;
+        }
+
+        /* --- Glow Button --- */
+        .btn-glow {
+            background: linear-gradient(135deg, var(--primary-glow) 0%, var(--secondary-glow) 100%);
             border: none;
-            color: white;
-            padding: 14px 30px;
+            color: #fff;
+            font-weight: 800;
             font-size: 1.1rem;
+            padding: 15px 30px;
             border-radius: 50px;
-            font-weight: 600;
             width: 100%;
-            margin-top: 30px;
-            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 40px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(232, 62, 140, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .btn-submit:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(118, 75, 162, 0.4);
-            color: white;
+
+        .btn-glow:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(232, 62, 140, 0.6);
+            color: #fff;
         }
     </style>
 </head>
 <body>
 
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+<div class="bg-orb orb-3"></div>
+
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-lg-10 col-xl-8">
-            <div class="registration-card">
+        <div class="col-lg-9 col-xl-8">
+            <div class="glass-card">
+    
+			    <div class="text-center mb-4 pb-3" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+			        <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Title Sponsor</div>
+			        <img src="https://www.oxita.in/wp-content/themes/twentyfifteen/images/oxita-logo.png" alt="Oxita" style="max-height: 40px; margin-bottom: 15px;">
+			        
+			        <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Co-Powered By</div>
+			        <div class="d-flex justify-content-center gap-4 align-items-center">
+			            <img th:src="@{/images/tally-logo.png}" alt="Tally Prime" style="max-height: 35px; border-radius: 4px;">
+			            <img th:src="@{/images/kedia-logo.webp}" alt="Kedia Capital" style="max-height: 35px; background: white; padding: 4px; border-radius: 4px;">
+			        </div>
+			    </div>
                 
-                <h2 class="form-title">Exclusive Event Registration</h2>
-                
+                <div class="text-center mb-3">
+                    <img th:src="@{/images/logo.png}" alt="Priyadarshini Logo" 
+                         style="max-width: 100%; height: auto; max-height: 100px; border-radius: 12px; box-shadow: 0 5px 25px rgba(232, 62, 140, 0.3);">
+                </div>
+    
+                <p class="header-subtitle">Empowering Women business leaders. Secure your spot today.</p>
+                <div th:if="${successMessage}" class="alert alert-success text-center" th:text="${successMessage}"></div>
+				<div th:if="${errorMessage}" class="alert alert-danger text-center" th:text="${errorMessage}"></div>
                 <form th:action="@{/register}" th:object="${registration}" method="post">
                     
-                    <h4 class="section-header">1. Personal Information</h4>
+
+<div class="section-title"><i class="fa-solid fa-user-tie"></i> Personal Information</div>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" class="form-control" th:field="*{name}" placeholder="John Doe" required />
+                            <div class="form-floating">
+                                <input type="text" class="form-control" th:field="*{name}" id="nameInput" placeholder="Name" required />
+                                <label for="nameInput">Full Name</label>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Email Address</label>
-                            <input type="email" class="form-control" th:field="*{emailAddress}" placeholder="john@example.com" required />
+                            <div class="form-floating">
+                                <input type="email" class="form-control" th:field="*{emailAddress}" id="emailInput" placeholder="Email" required />
+                                <label for="emailInput">Email Address</label>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Phone Number</label>
-                            <input type="number" class="form-control" th:field="*{phoneNumber}" placeholder="1234567890" required />
+                            <div class="form-floating">
+                                <input type="tel" class="form-control" th:field="*{phoneNumber}" id="phoneInput" placeholder="Phone" pattern="[0-9]{10}" maxlength="10" title="Please enter exactly 10 digits" required />
+                                <label for="phoneInput">Phone Number (10 Digits)</label>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Latest Education (Background)</label>
-                            <input type="text" class="form-control" th:field="*{background}" placeholder="e.g., Bachelor of Science" required />
-                        </div>
-                    </div>
-
-                    <h4 class="section-header">2. Business Profile</h4>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Business Name</label>
-                            <input type="text" class="form-control" th:field="*{businessName}" placeholder="Acme Corp" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Business Type</label>
-                            <input type="text" class="form-control" th:field="*{businessType}" placeholder="e.g., Retail, Tech" />
-                        </div>
-                        <div class="col-md-12">
-                            <label class="form-label">Business Location</label>
-                            <input type="text" class="form-control" th:field="*{businessLocation}" placeholder="City, State" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Business Email</label>
-                            <input type="email" class="form-control" th:field="*{businessEmail}" placeholder="contact@acmecorp.com" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Business Phone Number</label>
-                            <input type="number" class="form-control" th:field="*{businessPhoneNumber}" placeholder="0987654321" />
-                        </div>
-                    </div>
-
-                    <h4 class="section-header">3. Registration Type</h4>
-                    <div class="row g-3">
-                        <div class="col-md-12">
-                            <label class="form-label">Select Gender</label>
-                            <select class="form-select" th:field="*{gender}" id="genderSelect" onchange="handleDynamicForm()" required>
-                                <option value="" selected disabled>-- Choose Gender --</option>
-                                <option value="Female">Female (Free Registration)</option>
-                                <option value="Male">Male (Standard Registration)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div id="paymentSection">
-                        <h5 class="text-center mb-3" style="color: #333;">Complete Your Payment</h5>
-                        <p class="text-center text-muted mb-4">Please scan the QR code below to pay the registration fee.</p>
-                        
-                        <div class="qr-placeholder">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=YourPaymentLinkHere" alt="Scan to Pay" style="border-radius: 8px;">
-                        </div>
-                        
-                        <div class="row justify-content-center mt-3">
-                            <div class="col-md-8">
-                                <label class="form-label fw-bold">Enter Transaction ID <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" th:field="*{transactionId}" id="transactionIdInput" placeholder="e.g., TXN123456789" />
+                            <div class="form-floating">
+                                <input type="text" class="form-control" th:field="*{background}" id="eduInput" placeholder="Education" required />
+                                <label for="eduInput">Latest Education</label>
                             </div>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-submit" id="submitButton">Complete Registration</button>
+                    <div class="section-title"><i class="fa-solid fa-building"></i> Business Profile</div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" th:field="*{businessName}" id="bNameInput" placeholder="Business Name" required />
+                                <label for="bNameInput">Business Name</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" id="bTypeSelect" onchange="handleBusinessType()" required>
+                                    <option value="" selected disabled>-- Select Business Type --</option>
+                                    <option value="IT / Technology">IT / Technology</option>
+                                    <option value="Retail / E-commerce">Retail / E-commerce</option>
+                                    <option value="Manufacturing">Manufacturing</option>
+                                    <option value="Healthcare / Wellness">Healthcare / Wellness</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Consulting / Services">Consulting / Services</option>
+                                    <option value="Other">Other (Specify)</option>
+                                </select>
+                                <label for="bTypeSelect">Business Type</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6" id="bTypeOtherWrapper" style="display: none;">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="bTypeOther" placeholder="Specify Business Type" onkeyup="handleBusinessType()" />
+                                <label for="bTypeOther">Please Specify</label>
+                            </div>
+                        </div>
+                        
+                        <input type="hidden" th:field="*{businessType}" id="bTypeActual" />
+
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" th:field="*{businessLocation}" id="bLocInput" placeholder="Location" required />
+                                <label for="bLocInput">Business Location</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" th:field="*{businessEmail}" id="bEmailInput" placeholder="B-Email" />
+                                <label for="bEmailInput">Business Email</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="tel" class="form-control" th:field="*{businessPhoneNumber}" id="bPhoneInput" placeholder="B-Phone" pattern="[0-9]{10}" maxlength="10" title="Please enter exactly 10 digits" />
+                                <label for="bPhoneInput">Business Phone (10 Digits)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-title"><i class="fa-solid fa-id-card-clip"></i> Pass Selection</div>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <select class="form-select" th:field="*{gender}" id="genderSelect" onchange="handleDynamicForm()" required>
+                                    <option value="" selected disabled>-- Select Attendee Category --</option>
+                                    <option value="Female">Female Attendee (Sponsored / Free)</option>
+                                    <option value="Others">Others (Sponsored / Free)</option>
+                                    <option value="Male">Male Attendee (Standard Pass - ₹2000)</option>
+                                </select>
+                                <label for="genderSelect">Select Attendee Category</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="paymentSection">
+                        <h4 style="color: white; font-weight: 600; margin-bottom: 10px;">Standard Pass Activation</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Registration Fee: ₹2000. Scan the secure QR code below to complete your payment.</p>
+                        
+                        <div class="qr-wrapper" style="text-align: center;">
+                            <img th:src="@{/images/qrcode.jpeg}" alt="Payment QR" style="border-radius: 8px; max-width: 160px; height: auto; border: 1px solid #ddd;">
+                            
+                            <div style="margin-top: 10px; color: #333; font-weight: 600; font-size: 0.95rem;">
+                                Disha Tiwari<br>
+                                <span style="color: var(--primary-glow); font-family: monospace; font-size: 1rem;">tdisha934@okicici</span>
+                            </div>
+                        </div>
+                        
+                        <div class="alert mb-4" style="background: rgba(212, 175, 55, 0.15); border: 1px solid var(--accent-gold); color: white; text-align: left; font-size: 0.9rem; border-radius: 12px;">
+                            <strong><i class="fa-solid fa-circle-exclamation" style="color: var(--accent-gold);"></i> Important Note:</strong><br>
+                            While doing payment, in the "Note" or "Remark" section of your app, please write your name and number in this exact format:<br>
+                            <span style="color: var(--accent-gold); font-family: monospace; font-size: 1.1rem; display: block; margin-top: 5px; text-align: center;">Full name || Number</span>
+                        </div>
+                        <div class="row justify-content-center g-3">
+                            <div class="col-md-8">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" th:field="*{transactionId}" id="transactionIdInput" placeholder="Transaction ID" />
+                                    <label for="transactionIdInput"><i class="fa-solid fa-shield-halved"></i> Enter Transaction ID</label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-8">
+                                <label for="paymentScreenshot" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 5px; display: block; text-align: left;">Upload Payment Screenshot</label>
+                                
+                                <input type="hidden" id="base64Screenshot" name="base64Screenshot" />
+                                
+                                <input class="form-control" type="file" id="paymentScreenshot" accept="image/*" onchange="convertImageToBase64(this)" style="background-color: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); color: white;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-glow" id="submitButton">
+                        Complete Registration <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </button>
+                    
                 </form>
 
             </div>
@@ -196,27 +344,59 @@
         const paymentSection = document.getElementById("paymentSection");
         const submitButton = document.getElementById("submitButton");
         const transactionInput = document.getElementById("transactionIdInput");
+        const hiddenScreenshot = document.getElementById("base64Screenshot");
+        const visualFileInput = document.getElementById("paymentScreenshot");
 
-        if (gender === "Female") {
-            // Smoothly hide payment, remove required attribute, update button
+        if (gender === "Female" || gender === "Others") {
             paymentSection.style.display = "none";
             transactionInput.required = false;
-            transactionInput.value = ""; // Clear any entered ID
-            submitButton.innerText = "Register for Free ✨";
+            visualFileInput.required = false;
+            transactionInput.value = ""; 
+            hiddenScreenshot.value = ""; 
+            visualFileInput.value = "";
+            submitButton.innerHTML = "Claim Free Registration <i class='fa-solid fa-ticket ms-2'></i>";
         } else if (gender === "Male") {
-            // Show payment section, make transaction ID mandatory, update button
             paymentSection.style.display = "block";
             transactionInput.required = true;
-            submitButton.innerText = "Confirm Payment & Submit 💳";
+            visualFileInput.required = true;
+            submitButton.innerHTML = "Verify Payment & Register <i class='fa-solid fa-check-double ms-2'></i>";
         } else {
-            // Default reset state
             paymentSection.style.display = "none";
             transactionInput.required = false;
-            submitButton.innerText = "Complete Registration";
+            visualFileInput.required = false;
+            submitButton.innerHTML = "Complete Registration <i class='fa-solid fa-arrow-right ms-2'></i>";
+        }
+    }
+    
+    function handleBusinessType() {
+        const select = document.getElementById("bTypeSelect");
+        const otherWrapper = document.getElementById("bTypeOtherWrapper");
+        const otherInput = document.getElementById("bTypeOther");
+        const actualInput = document.getElementById("bTypeActual");
+
+        if (select.value === "Other") {
+            otherWrapper.style.display = "block";
+            otherInput.required = true;
+            actualInput.value = otherInput.value; // Save what they typed manually
+        } else {
+            otherWrapper.style.display = "none";
+            otherInput.required = false;
+            otherInput.value = ""; 
+            actualInput.value = select.value; // Save the dropdown selection
+        }
+    }
+
+    function convertImageToBase64(fileInput) {
+        const file = fileInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('base64Screenshot').value = e.target.result;
+            };
+            reader.readAsDataURL(file);
         }
     }
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

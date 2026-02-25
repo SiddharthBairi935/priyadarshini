@@ -5,12 +5,40 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+
 @Entity
 public class EventRegistration {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    // --- NEW FIELDS FOR EVENT DAY ---
+    private String uniqueId;
+    private boolean present = false; // Defaults to false (not present yet)
+
+    private boolean emailSent = false;
+
+    // Add these at the bottom:
+    public boolean isEmailSent() { return emailSent; }
+    public void setEmailSent(boolean emailSent) { this.emailSent = emailSent; }
+
+    // --- ADD THESE GETTERS AND SETTERS AT THE BOTTOM ---
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
+    public boolean isPresent() {
+        return present;
+    }
+
+    public void setPresent(boolean present) {
+        this.present = present;
+    }
 
     // Personal Details
     private String name;
@@ -29,8 +57,19 @@ public class EventRegistration {
 
     // Payment Details
     private double registrationFee; // We will calculate this based on gender later
+    @jakarta.persistence.Lob
+    @jakarta.persistence.Column(columnDefinition="LONGTEXT")
+    private String paymentScreenshot;
 
-    public EventRegistration() {
+    public String getPaymentScreenshot() {
+        return paymentScreenshot;
+    }
+
+    public void setPaymentScreenshot(String paymentScreenshot) {
+        this.paymentScreenshot = paymentScreenshot;
+    }
+
+	public EventRegistration() {
         // Default constructor required by JPA
     }
 

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #170A1C; color: #fff; padding: 40px 0; }
+        .glass-card { background: rgba(35, 15, 40, 0.8); border: 1px solid rgba(232, 62, 140, 0.2); border-radius: 16px; padding: 30px; }
+        .info-label { color: #F8BBD0; font-size: 0.9rem; margin-bottom: 2px; }
+        .info-value { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
+        .payment-img { max-width: 100%; border-radius: 12px; border: 2px solid #D4AF37; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a th:href="@{/admin/dashboard}" class="btn btn-outline-light mb-4"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+    
+    <div class="glass-card">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 style="color: #E83E8C; font-weight: 600;">Registration Details</h2>
+            
+            <div th:if="${!person.emailSent}">
+                <a th:href="@{/admin/send-email/{id}(id=${person.id})}" class="btn btn-warning" style="font-weight: 600;">
+                    <i class="fa-solid fa-envelope"></i> Send Confirmation Mail
+                </a>
+            </div>
+            <div th:if="${person.emailSent}">
+                <span class="badge bg-success" style="font-size: 1rem;"><i class="fa-solid fa-check-double"></i> Confirmation Email Sent</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4 style="color: #D4AF37; margin-bottom: 15px;"><i class="fa-solid fa-user"></i> Personal</h4>
+                <div class="info-label">Unique Event ID</div>
+                <div class="info-value" th:text="${person.uniqueId}" style="color: #D4AF37; font-family: monospace;"></div>
+                
+                <div class="info-label">Full Name</div>
+                <div class="info-value" th:text="${person.name}"></div>
+                
+                <div class="info-label">Email</div>
+                <div class="info-value" th:text="${person.emailAddress}"></div>
+                
+                <div class="info-label">Phone</div>
+                <div class="info-value" th:text="${person.phoneNumber}"></div>
+                
+                <div class="info-label">Education</div>
+                <div class="info-value" th:text="${person.background}"></div>
+            </div>
+
+            <div class="col-md-6">
+                <h4 style="color: #D4AF37; margin-bottom: 15px;"><i class="fa-solid fa-building"></i> Business & Payment</h4>
+                <div class="info-label">Category / Fee</div>
+                <div class="info-value">
+                    <span th:text="${person.gender}"></span> - 
+                    <span th:text="${person.registrationFee == 0 ? 'Free Pass' : 'Paid ₹2000'}" style="color: #28a745;"></span>
+                </div>
+
+                <div class="info-label">Business Name</div>
+                <div class="info-value" th:text="${person.businessName}"></div>
+
+                <div th:if="${person.registrationFee > 0}">
+                    <div class="info-label">Transaction ID</div>
+                    <div class="info-value" th:text="${person.transactionId != null ? person.transactionId : 'Not Provided'}"></div>
+                    
+                    <div class="info-label">Payment Screenshot</div>
+                    <div th:if="${person.paymentScreenshot != null and !person.paymentScreenshot.isEmpty()}">
+                        <img th:src="${person.paymentScreenshot}" class="payment-img mt-2" alt="Payment Proof">
+                    </div>
+                    <div th:unless="${person.paymentScreenshot != null and !person.paymentScreenshot.isEmpty()}">
+                        <span class="text-danger">No Screenshot Uploaded</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
