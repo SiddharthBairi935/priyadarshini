@@ -20,7 +20,17 @@
 	        .btn-glow { background: linear-gradient(45deg, #E83E8C, #D4AF37); border: none; color: white; padding: 12px 30px; border-radius: 30px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(232, 62, 140, 0.4); width: 100%; }
 	        .btn-glow:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6); color: white; }
 	        .section-title { color: #D4AF37; font-size: 1.2rem; font-weight: 600; margin: 30px 0 15px 0; border-bottom: 1px solid rgba(212, 175, 55, 0.3); padding-bottom: 5px; }
-	    </style>
+	    	
+			/* Fixes the white background on floating labels */
+			        .form-floating > .form-control:focus ~ label::after, 
+			        .form-floating > .form-control:not(:placeholder-shown) ~ label::after, 
+			        .form-floating > .form-select ~ label::after {
+			            background-color: transparent !important;
+			        }
+		
+		</style>
+		
+		
 </head>
 <body>
 <div class="container">
@@ -65,20 +75,22 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="form-floating">
-                                <select class="form-select" th:field="*{businessType}" id="bType" required>
-                                    <option value="" selected disabled>-- Select Type --</option>
-                                    <option value="IT / Technology">IT / Technology</option>
-                                    <option value="Retail / E-commerce">Retail / E-commerce</option>
-                                    <option value="Manufacturing">Manufacturing</option>
-                                    <option value="Healthcare / Wellness">Healthcare / Wellness</option>
-                                    <option value="Education">Education</option>
-                                    <option value="Finance / Consulting">Finance / Consulting</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                                <label for="bType">Business Type</label>
-                            </div>
-                        </div>
+							<div class="form-floating">
+							    <select class="form-select" th:field="*{businessType}" id="bType" required onchange="checkOther()">
+							        <option value="" selected disabled>-- Select Type --</option>
+							        <option value="IT / Technology">IT / Technology</option>
+							        <option value="Retail / E-commerce">Retail / E-commerce</option>
+							        <option value="Manufacturing">Manufacturing</option>
+							        <option value="Healthcare / Wellness">Healthcare / Wellness</option>
+							        <option value="Education">Education</option>
+							        <option value="Finance / Consulting">Finance / Consulting</option>
+							        <option value="Other">Other</option>
+							    </select>
+							    <label for="bType">Business Type</label>
+							<div class="form-floating mt-2" id="otherTypeDiv" style="display: none;">
+							    <input type="text" class="form-control" id="otherBType" placeholder="Enter your business type" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff;" />
+							    <label for="otherBType">Enter your business type</label>
+							</div>
                         <div class="col-md-6">
                             <div class="form-floating">
                                 <input type="email" class="form-control" th:field="*{email}" id="email" placeholder="Email" required />
@@ -88,7 +100,7 @@
                         <div class="col-md-6">
                             <div class="form-floating">
                                 <input type="tel" class="form-control" th:field="*{contactNumber}" id="phone" placeholder="Phone" pattern="[0-9]{10}" maxlength="10" title="Please enter exactly 10 digits" required />
-                                <label for="phone">Contact Number (10 Digits)</label>
+                                <label for="phone">Contact Number</label>
                             </div>
                         </div>
                     </div>
@@ -109,8 +121,23 @@
 					                            
 					                            <img th:src="@{/images/qrcode.jpeg}" alt="Payment QR Code" 
 					                                 style="max-width: 200px; border-radius: 12px; border: 3px solid #D4AF37; padding: 10px; background: white; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);">
-					                        </div>
 					                        
+													 <div style="margin-top: 10px; color: #333; font-weight: 600; font-size: 0.95rem;">
+													                                 Disha Tiwari<br>
+													                                 <span style="color: var(--primary-glow); font-family: monospace; font-size: 1rem;">tdisha934@okicici</span>
+													                             </div>
+												 </div>
+					                        
+												 <div class="alert mb-4" style="background: rgba(255, 51, 102, 0.1); border: 1px solid #ff3366; color: white; text-align: left; font-size: 0.9rem; border-radius: 12px;">
+												 					    <strong>
+												 					        <i class="fa-solid fa-triangle-exclamation" style="color: #ff3366;"></i> 
+												 					        <span style="color: #ff3366; font-size: 1rem;">Important Note:</span>
+												 					    </strong><br>
+												 					    While doing payment, in the "Note" or "Remark" section of your app, please write your name and number in this exact format:<br>
+												 					    <span style="color: #ff3366; font-family: monospace; font-size: 1.1rem; font-weight: bold; display: block; margin-top: 8px; text-align: center; letter-spacing: 1px;">
+												 					        Full name || Number
+												 					    </span>
+												 					</div>
 					                        <div class="col-md-6">
 					                            <div class="form-floating">
 					                                <input type="text" class="form-control" th:field="*{transactionId}" id="txnId" placeholder="Transaction ID" required />
@@ -159,6 +186,29 @@
 	            reader.readAsDataURL(file);
 	        }
 	    });
+		function checkOther() {
+		        var bType = document.getElementById('bType');
+		        var otherInput = document.getElementById('otherBType');
+		        if (bType.value === 'Other') {
+		            otherInput.style.display = 'block';
+		            otherInput.required = true;
+		        } else {
+		            otherInput.style.display = 'none';
+		            otherInput.required = false;
+		        }
+		    }
+
+		    // This grabs their custom text and puts it into the database
+		    document.querySelector('form').addEventListener('submit', function() {
+		        var bType = document.getElementById('bType');
+		        var otherInput = document.getElementById('otherBType');
+		        if (bType.value === 'Other') {
+		            var newOption = document.createElement('option');
+		            newOption.value = otherInput.value;
+		            newOption.selected = true;
+		            bType.appendChild(newOption);
+		        }
+		    });
 </script>
 </body>
 </html>
