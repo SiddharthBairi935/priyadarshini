@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -246,13 +247,20 @@ public class RegistrationController {
     }
 
     // --- NEW: PUBLIC SPONSOR DETAILS ---
+ // --- FIXED: PUBLIC SPONSOR DETAILS ---
     @GetMapping("/sponsors/{id}")
-    public String showSponsorPublicDetails(@org.springframework.web.bind.annotation.PathVariable Long id, org.springframework.ui.Model model) {
+    public String showSponsorPublicDetails(@PathVariable Long id, org.springframework.ui.Model model) {
         Sponsor sponsor = sponsorRepository.findById(id).orElse(null);
-        if (sponsor == null) return "redirect:/sponsors";
+        
+        // Security Check: If sponsor doesn't exist OR is not approved yet, kick them out
+        if (sponsor == null || !sponsor.isApproved()) {
+            return "redirect:/sponsors";
+        }
         
         model.addAttribute("sponsor", sponsor);
-        return "sponsor-details";
+        
+        // FIX: Pointing to the new public HTML file that hides the Amount
+        return "public-sponsor-details"; 
     }
     
     @GetMapping("/admin/sponsor/approve/{id}")
@@ -536,6 +544,20 @@ public class RegistrationController {
             }
         }
         return "Successfully sent " + successCount + " emails to sponsors!";
+    }
+    
+ // --- SPONSOR FULL DETAILS PAGE ---
+    @GetMapping("/admin/sponsor/details/{id}")
+    public String viewSponsorDetails(@PathVariable Long id, org.springframework.ui.Model model, HttpSession session) {
+        if (session.getAttribute("ADMIN_LOGGED_IN") == null) return "redirect:/admin/login";
+        
+        Sponsor sponsor = sponsorRepository.findById(id).orElse(null);
+        if (sponsor == null) {
+            return "redirect:/admin/sponsors"; // Redirects back if ID is invalid
+        }
+        
+        model.addAttribute("sponsor", sponsor);
+        return "sponsor-details"; // We will create this HTML file next
     }
     
  // --- NEW: API ENDPOINT FOR PDF FULL EXPORT ---

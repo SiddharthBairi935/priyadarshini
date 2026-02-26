@@ -128,16 +128,21 @@ public class EmailService {
              + "<p style='margin: 0 0 5px 0; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px;'>Title Sponsor</p>"
              + "<img src='https://www.oxita.in/wp-content/themes/twentyfifteen/images/oxita-logo.png' alt='Oxita' style='max-height: 35px; margin-bottom: 15px;'/>"
              + "<p style='margin: 0 0 5px 0; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px;'>Co-Powered By</p>"
-             + "<div style='display: flex; justify-content: center; align-items: center;'>"
              
-             // FIX: Using reliable, direct public links for Tally and Kedia
-             + "<img src='https://raw.githubusercontent.com/SiddharthBairi935/Image/main/Screenshot%202026-02-25%20095054.png' alt='Tally Solutions' style='max-height: 25px; margin: 0 15px;'/>"
-             + "<img src='https://raw.githubusercontent.com/SiddharthBairi935/Image/main/KediaLogo.webp' alt='Kedia Capital' style='max-height: 30px; margin: 0 15px;'/>"
-             + "</div>"
+             // FIX: Using an invisible HTML table to guarantee perfect center alignment in all email clients
+             + "<table role='presentation' border='0' cellpadding='0' cellspacing='0' align='center' style='margin: 0 auto;'>"
+             + "<tr>"
+             + "<td valign='middle' style='padding: 0 15px;'>"
+             + "<img src='https://raw.githubusercontent.com/SiddharthBairi935/Image/main/Screenshot%202026-02-25%20095054.png' alt='Tally Solutions' style='height: 30px; width: auto; display: block;'/>"
+             + "</td>"
+             + "<td valign='middle' style='padding: 0 15px;'>"
+             + "<img src='https://raw.githubusercontent.com/SiddharthBairi935/Image/main/KediaLogo.webp' alt='Kedia Capital' style='height: 30px; width: auto; display: block;'/>"
+             + "</td>"
+             + "</tr>"
+             + "</table>"
              + "</div>"
              
              // Main Event Logo 
-             // IMPORTANT: You must host your final logo somewhere stable (not ImgBB) and paste the link here!
              + "<div style='text-align: center; padding: 30px 20px; border-bottom: 3px solid #E83E8C;'>"
              + "<img src='https://raw.githubusercontent.com/SiddharthBairi935/Image/main/logo.png' alt='Priyadarshini Logo' style='max-height: 80px; width: auto; display: block; margin: 0 auto;'/>"
              + "</div>"

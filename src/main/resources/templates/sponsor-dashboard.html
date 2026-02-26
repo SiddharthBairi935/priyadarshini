@@ -100,7 +100,13 @@
                 <tbody>
                     <tr th:each="s : ${sponsors}">
                         <td style="text-align: center;"><input class="form-check-input row-checkbox" type="checkbox" th:value="${s.id}"></td>
-                        <td style="font-family: monospace; color: var(--accent-gold); font-weight: bold;" th:text="'SPN-' + ${s.id}"></td>
+						<td>
+						    <a th:href="@{/admin/sponsor/details/{id}(id=${s.id})}" 
+						       style="font-family: monospace; color: var(--accent-gold); font-size: 1.05rem; font-weight: bold; text-decoration: none;" 
+						       onmouseover="this.style.textDecoration='underline';" 
+						       onmouseout="this.style.textDecoration='none';"
+						       th:text="'SPN-' + ${s.id}"></a>
+						</td>
                         <td th:text="${s.businessName}" style="font-weight: 600; color: #E83E8C;"></td>
                         <td th:text="${s.contactNumber}" style="color: #a0aec0;"></td>
                         <td th:text="${s.sponsorshipType}"></td>

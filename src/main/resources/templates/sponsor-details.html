@@ -2,48 +2,192 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Sponsor Details - Priyadarshini</title>
+    <title>Sponsor Details - Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: 'Outfit', sans-serif; background-color: #170A1C; color: #fff; padding: 40px 0; }
-        .glass-card { background: rgba(35, 15, 40, 0.8); border: 1px solid rgba(232, 62, 140, 0.2); border-radius: 16px; padding: 40px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); }
-        .info-label { color: #a0aec0; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .info-value { font-size: 1.2rem; color: #fff; font-weight: 600; margin-bottom: 25px; }
+        
+        .profile-card {
+            background-color: #1D0E25; 
+            border: 1px solid rgba(232, 62, 140, 0.15);
+            border-radius: 16px;
+            padding: 40px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .status-approved { background: rgba(40, 167, 69, 0.1); color: #28a745; border: 1px solid rgba(40, 167, 69, 0.3); }
+        .status-pending { background: rgba(212, 175, 55, 0.1); color: #D4AF37; border: 1px solid rgba(212, 175, 55, 0.3); }
+
+        .logo-box {
+            background: #ffffff;
+            border-radius: 16px;
+            width: 180px;
+            height: 140px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .tier-pill {
+            background: rgba(232, 62, 140, 0.15);
+            color: #E83E8C;
+            padding: 6px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        .divider { height: 1px; background: rgba(255,255,255,0.05); margin-bottom: 30px; }
+
+        .info-label { color: #8c98a4; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600; }
+        .info-value { font-size: 1.1rem; color: #ffffff; font-weight: 600; margin-bottom: 25px; }
+        .info-value a { color: #ffffff; text-decoration: none; }
+        .info-value a:hover { text-decoration: underline; }
+        
+        /* NEW: Styles for the Payment Screenshot Box */
+        .screenshot-container {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px dashed rgba(40, 167, 69, 0.4);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .screenshot-img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            object-fit: contain;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .screenshot-img:hover { transform: scale(1.02); }
     </style>
 </head>
 <body>
 <div class="container">
-    <a th:href="@{/sponsors}" class="btn btn-outline-light mb-4 rounded-pill px-4"><i class="fa-solid fa-arrow-left"></i> Back to All Sponsors</a>
-    
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="glass-card text-center">
+        <div class="col-lg-8 col-md-10">
+            
+            <a th:href="@{/admin/sponsors}" class="btn btn-outline-light mb-4 rounded-pill px-4"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+            
+            <div class="profile-card text-center">
                 
-                <div style="background: white; display: inline-block; padding: 20px; border-radius: 16px; margin-bottom: 30px;">
-                    <img th:if="${sponsor.logoBase64 != null}" th:src="${sponsor.logoBase64}" style="max-height: 150px; max-width: 100%;">
+                <div class="status-badge status-approved" th:if="${sponsor.approved}">
+                    <i class="fa-solid fa-check-circle"></i> Approved
+                </div>
+                <div class="status-badge status-pending" th:unless="${sponsor.approved}">
+                    <i class="fa-solid fa-clock"></i> Pending
+                </div>
+
+                <div class="logo-box">
+                    <img th:if="${sponsor.logoBase64 != null && !sponsor.logoBase64.isEmpty()}" th:src="${sponsor.logoBase64}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                    <div th:unless="${sponsor.logoBase64 != null && !sponsor.logoBase64.isEmpty()}" style="color: #cbd5e1; font-size: 0.9rem;">
+                        <i class="fa-solid fa-image fa-2x mb-2 d-block"></i>No Logo
+                    </div>
                 </div>
                 
-                <h1 style="color: #D4AF37; font-weight: 600; margin-bottom: 5px;" th:text="${sponsor.businessName}"></h1>
-                <span style="background: rgba(232, 62, 140, 0.2); color: #E83E8C; padding: 5px 15px; border-radius: 20px; font-weight: 600; display: inline-block; margin-bottom: 40px;" th:text="${sponsor.sponsorshipType}"></span>
+                <div style="color: #D4AF37; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px;" th:text="'SPN-' + ${sponsor.id}"></div>
+                <h1 style="font-weight: 700; margin-bottom: 15px;" th:text="${sponsor.businessName}"></h1>
+                <div class="tier-pill" th:text="${sponsor.sponsorshipType}"></div>
 
-                <div class="row text-start">
-                    <div class="col-md-6">
-                        <div class="info-label"><i class="fa-solid fa-briefcase"></i> Industry</div>
+                <div class="divider"></div>
+
+                <div class="row text-start px-md-4">
+                    <div class="col-sm-6">
+                        <div class="info-label"><i class="fa-solid fa-briefcase me-2"></i>Industry</div>
                         <div class="info-value" th:text="${sponsor.businessType}"></div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="info-label"><i class="fa-solid fa-envelope"></i> Official Contact</div>
-                        <div class="info-value">
-                            <a th:href="'mailto:' + ${sponsor.email}" style="color: #fff; text-decoration: none;" th:text="${sponsor.email}"></a>
-                        </div>
+                    <div class="col-sm-6">
+                        <div class="info-label"><i class="fa-solid fa-indian-rupee-sign me-2"></i>Amount Expected</div>
+                        <div class="info-value" style="color: #28a745;" th:text="'₹' + ${sponsor.amount}"></div>
+                    </div>
+                    
+                    <div class="col-sm-6">
+                        <div class="info-label"><i class="fa-solid fa-envelope me-2"></i>Contact Email</div>
+                        <div class="info-value"><a th:href="'mailto:' + ${sponsor.email}" th:text="${sponsor.email}"></a></div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="info-label"><i class="fa-solid fa-phone me-2"></i>Contact Phone</div>
+                        <div class="info-value"><a th:href="'tel:' + ${sponsor.contactNumber}" th:text="${sponsor.contactNumber}"></a></div>
+                    </div>
+                    
+                    <div class="col-12">
+                        <div class="info-label"><i class="fa-solid fa-location-dot me-2"></i>Business Location</div>
+                        <div class="info-value mb-0" th:text="${sponsor.businessLocation}"></div>
                     </div>
                 </div>
                 
-            </div>
-        </div>
-    </div>
-</div>
-</body>
-</html>
+                <div class="divider" style="margin-top: 30px;"></div>
+
+				<div class="text-start px-md-4">
+				                    <h5 style="color: #D4AF37; margin-bottom: 15px;"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Payment Verification</h5>
+				                    
+				                    <div th:if="${sponsor.transactionId != null && !sponsor.transactionId.isEmpty()}" style="margin-bottom: 15px;">
+				                        <span style="color: #8c98a4; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Transaction ID:</span>
+				                        <span style="color: #fff; font-family: monospace; font-size: 1.1rem; margin-left: 10px;" th:text="${sponsor.transactionId}"></span>
+				                    </div>
+				                    
+				                    <div class="screenshot-container">
+				                        <img th:if="${sponsor.paymentScreenshotBase64 != null && !sponsor.paymentScreenshotBase64.isEmpty()}" 
+				                             th:src="${sponsor.paymentScreenshotBase64}" 
+				                             class="screenshot-img" 
+				                             alt="Payment Receipt" 
+				                             data-bs-toggle="modal" data-bs-target="#imageModal">
+				                             
+				                        <div th:unless="${sponsor.paymentScreenshotBase64 != null && !sponsor.paymentScreenshotBase64.isEmpty()}" style="color: #a0aec0; padding: 20px 0;">
+				                            <i class="fa-solid fa-receipt fa-2x mb-3 d-block text-muted"></i>
+				                            No payment screenshot was uploaded by this sponsor.
+				                        </div>
+				                    </div>
+				                    <p style="font-size: 0.8rem; color: #8c98a4; text-align: center; margin-top: 10px;" th:if="${sponsor.paymentScreenshotBase64 != null && !sponsor.paymentScreenshotBase64.isEmpty()}">
+				                        Click image to enlarge
+				                    </p>
+				                </div>
+
+				                <div th:unless="${sponsor.approved}" class="mt-4 pt-4" style="border-top: 1px solid rgba(255,255,255,0.05);">
+				                    <a th:href="@{/admin/sponsor/approve/{id}(id=${sponsor.id})}" class="btn btn-success rounded-pill px-5 py-3 fw-bold w-100" style="font-size: 1.1rem;">
+				                        <i class="fa-solid fa-check-double me-2"></i> Verify Payment & Approve Sponsor
+				                    </a>
+				                </div>
+
+				            </div>
+				        </div>
+				    </div>
+				</div>
+
+				<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+				  <div class="modal-dialog modal-lg modal-dialog-centered">
+				    <div class="modal-content" style="background: transparent; border: none;">
+				      <div class="modal-header border-0 pb-0">
+				        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+				      </div>
+				      <div class="modal-body text-center pt-0">
+				        <img th:if="${sponsor.paymentScreenshotBase64 != null}" th:src="${sponsor.paymentScreenshotBase64}" style="max-width: 100%; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
+				      </div>
+				    </div>
+				  </div>
+				</div>
+
+				<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+				</body>
+				</html>

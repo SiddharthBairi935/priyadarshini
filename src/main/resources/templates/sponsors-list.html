@@ -2,42 +2,178 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Sponsors - Priyadarshini</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body { font-family: 'Outfit', sans-serif; background-color: #170A1C; color: #fff; padding: 40px 0; }
-        .sponsor-card { background: rgba(35, 15, 40, 0.8); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 12px; padding: 20px; text-align: center; transition: all 0.3s ease; text-decoration: none; display: block; height: 100%; cursor: pointer;}
-        .sponsor-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2); border-color: #D4AF37; }
-        .tier-badge { background: rgba(212, 175, 55, 0.2); color: #D4AF37; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 15px; display: inline-block; }
+        :root {
+            --primary-glow: #E83E8C;     
+            --secondary-glow: #6F42C1;   
+            --accent-gold: #D4AF37;      
+            --bg-color: #170A1C;         
+            --glass-bg: rgba(35, 15, 40, 0.65); 
+            --glass-border: rgba(232, 62, 140, 0.2); 
+        }
+
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background-color: var(--bg-color); 
+            color: #fff; 
+            padding: 60px 0; 
+            position: relative;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Ambient Background Orbs */
+        .bg-orb { position: fixed; border-radius: 50%; filter: blur(100px); z-index: -1; animation: float 12s infinite ease-in-out alternate; }
+        .orb-1 { width: 400px; height: 400px; background: var(--primary-glow); top: -100px; left: -100px; opacity: 0.3; }
+        .orb-2 { width: 500px; height: 500px; background: var(--secondary-glow); bottom: -150px; right: -100px; animation-delay: -6s; opacity: 0.3; }
+
+        @keyframes float {
+            0% { transform: translateY(0px) scale(1); }
+            100% { transform: translateY(40px) scale(1.1); }
+        }
+
+        .header-title {
+            font-weight: 800;
+            font-size: 3rem;
+            background: linear-gradient(to right, var(--accent-gold), var(--primary-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        /* Upgraded Premium Glass Card */
+        .sponsor-card { 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); 
+            border-radius: 16px; 
+            padding: 30px 20px; 
+            text-align: center; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            text-decoration: none; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%; 
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sponsor-card:hover { 
+            transform: translateY(-10px); 
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.2); 
+            border-color: var(--accent-gold); 
+        }
+        
+        /* Subtle glow inside the card on hover */
+        .sponsor-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 100%;
+            background: linear-gradient(180deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
+            opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+        }
+        .sponsor-card:hover::before { opacity: 1; }
+
+        .tier-badge { 
+            background: rgba(212, 175, 55, 0.15); 
+            color: var(--accent-gold); 
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 6px 18px; 
+            border-radius: 30px; 
+            font-size: 0.75rem; 
+            font-weight: 600; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 25px; 
+            display: inline-block; 
+        }
+
+        .logo-container {
+            height: 140px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .sponsor-logo { max-height: 100%; max-width: 100%; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+
+        .btn-glow {
+            background: transparent;
+            border: 2px solid var(--primary-glow);
+            color: #fff;
+            font-weight: 600;
+            padding: 12px 35px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-glow:hover {
+            background: var(--primary-glow);
+            box-shadow: 0 10px 20px rgba(232, 62, 140, 0.4);
+            color: #fff;
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="text-center mb-5">
-        <h1 style="color: #D4AF37; font-weight: 600;">Our Esteemed Sponsors</h1>
-        <p style="color: #a0aec0;">We are deeply grateful to the corporate partners empowering women in business.</p>
+
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+
+<div class="container position-relative" style="z-index: 10;">
+    
+    <div class="text-center mb-5 pb-3">
+        <h1 class="header-title">Our Esteemed Sponsors</h1>
+        <p style="color: #a0aec0; font-size: 1.1rem; max-width: 600px; margin: 0 auto;">We are deeply grateful to the corporate partners empowering women in business.</p>
     </div>
 
-    <div class="row g-4">
-        <div class="col-md-4 col-sm-6" th:each="sponsor : ${sponsors}">
+    <div class="row g-4 justify-content-center">
+        <div class="col-lg-3 col-md-4 col-sm-6" th:each="sponsor : ${sponsors}">
             <a th:href="@{/sponsors/{id}(id=${sponsor.id})}" class="sponsor-card">
-                <div class="tier-badge" th:text="${sponsor.sponsorshipType}"></div>
                 
-                <div style="height: 120px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
-                    <img th:if="${sponsor.logoBase64 != null}" th:src="${sponsor.logoBase64}" style="max-height: 100px; max-width: 100%; object-fit: contain; border-radius: 8px;">
-                    <span th:unless="${sponsor.logoBase64 != null}" style="color: #666;">No Logo</span>
+                <div>
+                    <div class="tier-badge" th:text="${sponsor.sponsorshipType}"></div>
+                    
+                    <div class="logo-container">
+                        <img th:if="${sponsor.logoBase64 != null && !sponsor.logoBase64.isEmpty()}" 
+                             th:src="${sponsor.logoBase64}" 
+                             class="sponsor-logo" alt="Sponsor Logo">
+                        
+                        <div th:unless="${sponsor.logoBase64 != null && !sponsor.logoBase64.isEmpty()}" 
+                             style="color: rgba(255,255,255,0.2); text-align: center;">
+                            <i class="fa-solid fa-image" style="font-size: 2.5rem; margin-bottom: 10px; display: block;"></i>
+                            <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Logo Pending</span>
+                        </div>
+                    </div>
                 </div>
                 
-                <h4 style="color: #E83E8C; margin: 0;" th:text="${sponsor.businessName}"></h4>
-                <small style="color: #a0aec0;" th:text="${sponsor.businessType}"></small>
+                <div>
+                    <h4 style="color: #fff; margin: 0; font-weight: 600; letter-spacing: 0.5px;" th:text="${sponsor.businessName}"></h4>
+                    <small style="color: var(--primary-glow); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px;" th:text="${sponsor.businessType}"></small>
+                </div>
+                
             </a>
         </div>
     </div>
     
-    <div class="text-center mt-5">
-        <a th:href="@{/register}" class="btn btn-outline-light rounded-pill px-4">Return to Main Website</a>
+    <div class="text-center mt-5 pt-4">
+        <a th:href="@{/register}" class="btn-glow"><i class="fa-solid fa-arrow-left me-2"></i> Return to Main Website</a>
     </div>
+    
 </div>
+
 </body>
 </html>
