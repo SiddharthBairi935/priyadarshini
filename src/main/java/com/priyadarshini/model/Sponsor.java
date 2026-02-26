@@ -10,11 +10,12 @@ public class Sponsor {
     private Long id;
 
     private String businessName;
-    private String contactNumber;
+    private Long contactNumber;
     private String email;
     private String businessType;
     private String sponsorshipType;
     private Double amount;
+    private String businessLocation;
     
  // --- APPROVAL TRACKING ---
     private boolean approved = false; // Defaults to false (Pending Review)
@@ -52,8 +53,8 @@ public class Sponsor {
     public String getBusinessName() { return businessName; }
     public void setBusinessName(String businessName) { this.businessName = businessName; }
 
-    public String getContactNumber() { return contactNumber; }
-    public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
+    public Long getContactNumber() { return contactNumber; }
+    public void setContactNumber(Long contactNumber) { this.contactNumber = contactNumber; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
@@ -69,4 +70,7 @@ public class Sponsor {
 
     public String getLogoBase64() { return logoBase64; }
     public void setLogoBase64(String logoBase64) { this.logoBase64 = logoBase64; }
+    
+    public String getBusinessLocation() { return businessLocation; }
+    public void setBusinessLocation(String businessLocation) { this.businessLocation = businessLocation; }
 }

@@ -128,9 +128,12 @@ public class RegistrationController {
         return "redirect:/admin";
     }
     
- // --- NEW: TOGGLE ATTENDANCE ON EVENT DAY ---
+ // --- TOGGLE ATTENDANCE ON EVENT DAY ---
     @org.springframework.web.bind.annotation.GetMapping("/admin/toggle-presence/{id}")
-    public String togglePresence(@org.springframework.web.bind.annotation.PathVariable Long id, HttpSession session) {
+    public String togglePresence(@org.springframework.web.bind.annotation.PathVariable Long id, 
+                                 HttpSession session, 
+                                 jakarta.servlet.http.HttpServletRequest request) {
+        
         // Protect the route
         if (session.getAttribute("ADMIN_LOGGED_IN") == null) {
             return "redirect:/admin";
@@ -143,7 +146,13 @@ public class RegistrationController {
             repository.save(person);
         }
         
-        // Refresh the dashboard
+        // Smart Redirect: Send them back to the exact page they came from!
+        String referer = request.getHeader("Referer");
+        if (referer != null && !referer.isEmpty()) {
+            return "redirect:" + referer;
+        }
+        
+        // Fallback just in case
         return "redirect:/admin/dashboard";
     }
     
@@ -271,5 +280,258 @@ public class RegistrationController {
     @org.springframework.web.bind.annotation.GetMapping("/sponsor-success")
     public String showSponsorSuccess() {
         return "sponsor-success";
+    }
+    
+ // --- NEW: BULK EMAIL ENDPOINT ---
+    @PostMapping("/admin/bulk-email")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public String sendBulkEmail(@RequestParam("ids") java.util.List<Long> ids, 
+                                @RequestParam("message") String message, 
+                                HttpSession session) {
+        if (session.getAttribute("ADMIN_LOGGED_IN") == null) return "Unauthorized";
+        
+        int successCount = 0;
+        for (Long id : ids) {
+            EventRegistration person = repository.findById(id).orElse(null);
+            if (person != null && person.getEmailAddress() != null) {
+                emailService.sendCustomEmail(person.getEmailAddress(), person.getName(), message);
+                successCount++;
+            }
+        }
+        return "Successfully sent " + successCount + " emails!";
+    }
+
+    // --- NEW: FULL DATABASE EXPORT ENDPOINT ---
+    @GetMapping("/admin/export/all-details")
+    public void exportAllDetailsCSV(jakarta.servlet.http.HttpServletResponse response, HttpSession session) throws Exception {
+        if (session.getAttribute("ADMIN_LOGGED_IN") == null) return;
+        
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=\"Priyadarshini_Full_Database.csv\"");
+        
+        java.util.List<EventRegistration> allData = repository.findAll();
+        java.io.PrintWriter writer = response.getWriter();
+        
+        // CSV Headers
+        writer.println("Sys_ID,Reg_ID,Name,Phone,Gender,Email,Education,Biz_Type,Biz_Name,Biz_Location,Biz_Email,Biz_Phone,Txn_ID,Fee_Paid,Is_Present");
+        
+        for (EventRegistration p : allData) {
+            writer.println(
+                p.getId() + "," +
+                (p.getUniqueId() != null ? p.getUniqueId() : "") + "," +
+                "\"" + p.getName() + "\"," +
+                p.getPhoneNumber() + "," +
+                p.getGender() + "," +
+                p.getEmailAddress() + "," +
+                "\"" + p.getBackground() + "\"," +
+                "\"" + p.getBusinessType() + "\"," +
+                "\"" + p.getBusinessName() + "\"," +
+                "\"" + p.getBusinessLocation() + "\"," +
+                (p.getBusinessEmail() != null ? p.getBusinessEmail() : "") + "," +
+                (p.getBusinessPhoneNumber() != null ? p.getBusinessPhoneNumber() : "") + "," +
+                (p.getTransactionId() != null ? p.getTransactionId() : "") + "," +
+                p.getRegistrationFee() + "," +
+                p.isPresent()
+            );
+        }
+    }
+    
+ // --- TEMPORARY MOCK DATA GENERATOR ---
+    @org.springframework.web.bind.annotation.GetMapping("/admin/generate-mock-data")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public String generateMockData(HttpSession session) {
+        // Security check
+        if (session.getAttribute("ADMIN_LOGGED_IN") == null) return "Unauthorized. Please log in first.";
+
+        String[] names = {"Aisha Sharma", "Rahul Verma", "Priya Desai", "Vikram Singh", "Neha Gupta", "Karan Patel", "Sneha Iyer", "Arjun Reddy", "Kavya Menon", "Rohan Mehta"};
+        String[] genders = {"Female", "Male", "Female", "Male", "Female", "Male", "Female", "Male", "Female", "Others"};
+        String[] types = {"IT / Technology", "Finance / Consulting", "Retail / E-commerce", "Manufacturing", "Healthcare / Wellness", "Education", "Retail / E-commerce", "IT / Technology", "Education", "Healthcare / Wellness"};
+
+        int addedCount = 0;
+        
+        for (int i = 0; i < names.length; i++) {
+            EventRegistration reg = new EventRegistration();
+            reg.setName(names[i]);
+            reg.setEmailAddress("testuser" + i + "@example.com");
+            reg.setPhoneNumber(9800000000L + i); // Fake phone number
+            reg.setGender(genders[i]);
+            reg.setBackground("Master's Degree");
+            reg.setBusinessName("Mock Enterprise " + (i + 1));
+            reg.setBusinessType(types[i]);
+            reg.setBusinessLocation("Mumbai, Maharashtra");
+            reg.setPresent(i % 2 == 0); // Makes every alternating person "Present"
+
+            // Handle logic for Fee and TXN ID
+            boolean isMale = "Male".equalsIgnoreCase(genders[i]);
+            reg.setRegistrationFee(isMale ? 2000.0 : 0.0);
+            if (isMale) {
+                reg.setTransactionId("MOCK-TXN-" + (1000 + i));
+            }
+
+            // Generate Unique ID
+            long count = repository.count() + 1;
+            reg.setUniqueId("PRIYA-MOCK-" + String.format("%03d", count));
+
+            repository.save(reg);
+            addedCount++;
+        }
+
+        return "<div style='font-family: sans-serif; text-align: center; margin-top: 50px;'>"
+             + "<h2 style='color: #28a745;'>Successfully generated " + addedCount + " mock attendees!</h2>"
+             + "<a href='/admin/dashboard' style='padding: 10px 20px; background: #E83E8C; color: white; text-decoration: none; border-radius: 5px;'>Go Back to Dashboard</a>"
+             + "</div>";
+    }
+    
+ // ==========================================
+    // --- EVENT DAY STAFF PORTAL ROUTES ---
+    // ==========================================
+
+    @GetMapping("/staff")
+    public String showStaffLogin() {
+        return "staff-login";
+    }
+
+    @PostMapping("/staff/login")
+    public String handleStaffLogin(@RequestParam String username, 
+                                   @RequestParam String password, 
+                                   HttpSession session, Model model) {
+        // Simple staff credentials (you can change these!)
+        if ("staff".equals(username) && "event123".equals(password)) {
+            session.setAttribute("STAFF_LOGGED_IN", true);
+            return "redirect:/staff/dashboard";
+        }
+        model.addAttribute("error", "Invalid staff credentials!");
+        return "staff-login";
+    }
+
+    @GetMapping("/staff/dashboard")
+    public String showStaffDashboard(HttpSession session, Model model) {
+        if (session.getAttribute("STAFF_LOGGED_IN") == null) {
+            return "redirect:/staff";
+        }
+        // Staff needs to see everyone to check them in
+        model.addAttribute("registrations", repository.findAll());
+        return "staff-dashboard";
+    }
+
+    @GetMapping("/staff/mark-present/{id}")
+    public String staffMarkPresent(@org.springframework.web.bind.annotation.PathVariable Long id, HttpSession session) {
+        if (session.getAttribute("STAFF_LOGGED_IN") == null) {
+            return "redirect:/staff";
+        }
+        
+        EventRegistration person = repository.findById(id).orElse(null);
+        if (person != null) {
+            // ONE-WAY LOCK: Only changes it if they are currently NOT present
+            if (!person.isPresent()) {
+                person.setPresent(true); 
+                repository.save(person);
+            }
+            // If they are already present, it does nothing (only Admin can undo)
+        }
+        
+        return "redirect:/staff/dashboard";
+    }
+
+    @GetMapping("/staff/logout")
+    public String staffLogout(HttpSession session) {
+        session.removeAttribute("STAFF_LOGGED_IN"); 
+        return "redirect:/staff";
+    }
+    
+ // --- API FOR SPONSOR FULL DATA (For PDF) ---
+    @GetMapping("/admin/api/all-sponsors")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public List<Sponsor> getAllSponsorsApi(HttpSession session) {
+        if (session.getAttribute("ADMIN_LOGGED_IN") == null) return null;
+        return sponsorRepository.findAll();
+    }
+
+    // --- FULL SPONSOR EXCEL EXPORT (CSV) ---
+    @GetMapping("/admin/export/all-sponsors")
+    public void exportAllSponsorsCSV(jakarta.servlet.http.HttpServletResponse response, HttpSession session) throws Exception {
+        if (session.getAttribute("ADMIN_LOGGED_IN") == null) return;
+        
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=\"Sponsors_Full_Database.csv\"");
+        
+        List<Sponsor> allSponsors = sponsorRepository.findAll();
+        java.io.PrintWriter writer = response.getWriter();
+        
+        // CSV Headers
+        writer.println("ID,Business_Name,Contact_Phone,Email,Tier,Business_Type,Amount,Approved,Email_Sent");
+        
+        for (Sponsor s : allSponsors) {
+            writer.println(
+                s.getId() + "," +
+                "\"" + s.getBusinessName() + "\"," +
+                s.getContactNumber() + "," +
+                s.getEmail() + "," +
+                "\"" + s.getSponsorshipType() + "\"," +
+                "\"" + s.getBusinessType() + "\"," +
+                s.getAmount() + "," +
+                s.isApproved() + "," +
+                s.isEmailSent()
+            );
+        }
+    }
+    
+ // --- TEMPORARY SPONSOR MOCK DATA GENERATOR ---
+    @GetMapping("/admin/generate-mock-sponsors")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public String generateMockSponsors(HttpSession session) {
+        if (session.getAttribute("ADMIN_LOGGED_IN") == null) return "Unauthorized";
+
+        String[] bizNames = {"Oxita Tech", "Tally Solutions", "Kedia Capital", "Reliance Retail", "Standard Chartered"};
+        String[] tiers = {"Title Sponsor", "Co-Powered By", "Co-Powered By", "Sponsored By", "Sponsored By"};
+        String[] types = {"IT Services", "Software", "Finance", "Retail", "Banking"};
+        Double[] amounts = {50000.0, 30000.0, 30000.0, 15000.0, 15000.0};
+
+        for (int i = 0; i < bizNames.length; i++) {
+            Sponsor s = new Sponsor();
+            s.setBusinessName(bizNames[i]);
+            s.setSponsorshipType(tiers[i]);
+            s.setBusinessType(types[i]);
+            s.setAmount(amounts[i]);
+            s.setContactNumber(9900000000L + i);
+            s.setEmail("partner" + i + "@example.com");
+            s.setApproved(i < 3); // Mark first 3 as already approved
+            s.setBusinessLocation("Mumbai, India");
+            
+            sponsorRepository.save(s);
+        }
+
+        return "<div style='font-family:sans-serif; text-align:center; padding-top:50px; color:white; background:#170A1C; height:100vh;'>"
+             + "<h2 style='color:#D4AF37;'>5 Mock Sponsors Generated!</h2>"
+             + "<a href='/admin/sponsors' style='color:#E83E8C;'>Go to Sponsor Dashboard</a>"
+             + "</div>";
+    }
+    
+    // --- BULK EMAIL FOR SPONSORS ---
+    @PostMapping("/admin/bulk-email-sponsors")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public String sendBulkEmailSponsors(@RequestParam("ids") List<Long> ids, 
+                                        @RequestParam("message") String message, 
+                                        HttpSession session) {
+        if (session.getAttribute("ADMIN_LOGGED_IN") == null) return "Unauthorized";
+        
+        int successCount = 0;
+        for (Long id : ids) {
+            Sponsor s = sponsorRepository.findById(id).orElse(null);
+            if (s != null && s.getEmail() != null) {
+                // Reusing the custom email method we built earlier
+                emailService.sendCustomEmail(s.getEmail(), s.getBusinessName(), message);
+                successCount++;
+            }
+        }
+        return "Successfully sent " + successCount + " emails to sponsors!";
+    }
+    
+ // --- NEW: API ENDPOINT FOR PDF FULL EXPORT ---
+    @org.springframework.web.bind.annotation.GetMapping("/admin/api/all-data")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public java.util.List<EventRegistration> getAllDataApi(HttpSession session) {
+        if (session.getAttribute("ADMIN_LOGGED_IN") == null) return null;
+        return repository.findAll();
     }
 }

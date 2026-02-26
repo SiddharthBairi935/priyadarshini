@@ -112,4 +112,34 @@ public class EmailService {
             System.err.println("Failed to send sponsor email: " + e.getMessage());
         }
     }
+    
+ // --- NEW: BULK CUSTOM EMAIL SENDER ---
+    public void sendCustomEmail(String toEmail, String name, String customMessage) {
+        try {
+            jakarta.mail.internet.MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(toEmail);
+            helper.setSubject("Message from Priyadarshini Organizing Committee");
+
+            String htmlMsg = "<div style='font-family: \"Segoe UI\", Tahoma, sans-serif; background-color: #f4f4f4; padding: 40px 10px;'>"
+                    + "<div style='max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; padding: 40px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);'>"
+                    + "<div style='text-align: center; padding-bottom: 20px; border-bottom: 3px solid #E83E8C;'>"
+                    + "<img src='https://i.ibb.co/zdQqJsw/logo.png' alt='Priyadarshini Logo' style='max-height: 80px;'/>"
+                    + "</div>"
+                    + "<h2 style='color: #E83E8C; margin-top: 20px;'>Dear " + name + ",</h2>"
+                    // Injects your custom message here! (Preserves line breaks)
+                    + "<div style='font-size: 16px; color: #333; line-height: 1.6; white-space: pre-wrap;'>" + customMessage + "</div>"
+                    + "<div style='margin-top: 40px; padding-top: 20px; border-top: 1px solid #eeeeee;'>"
+                    + "<p style='margin: 0; font-size: 16px; font-weight: bold; color: #333;'>Sincerely,</p>"
+                    + "<p style='margin: 5px 0 0 0; font-size: 16px; color: #E83E8C; font-weight: 600;'>Priyadarshini Organizing Committee</p>"
+                    + "</div></div></div>";
+
+            helper.setText(htmlMsg, true);
+            mailSender.send(message);
+
+        } catch (Exception e) {
+            System.err.println("Failed to send custom email to " + toEmail + ": " + e.getMessage());
+        }
+    }
 }

@@ -8,29 +8,68 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<style>
+            /* --- BROUGHT OVER YOUR COLOR PALETTE --- */
+            :root {
+                --primary-glow: #E83E8C;     
+                --secondary-glow: #6F42C1;   
+                --accent-gold: #D4AF37;      
+                --bg-color: #170A1C;         
+            }
+
 	        body { font-family: 'Outfit', sans-serif; background-color: #170A1C; color: #fff; padding: 40px 0; }
 	        .glass-card { background: rgba(35, 15, 40, 0.8); border: 1px solid rgba(232, 62, 140, 0.2); border-radius: 16px; padding: 40px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); }
 	        .form-control, .form-select { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; border-radius: 8px; }
 	        .form-control:focus, .form-select:focus { background: rgba(255, 255, 255, 0.1); border-color: #E83E8C; color: #fff; box-shadow: 0 0 0 0.25rem rgba(232, 62, 140, 0.25); }
 	        .form-floating label { color: #a0aec0; }
 	        
-	        /* FIX ADDED HERE */
 	        select option { background-color: #170A1C; color: #fff; }
 
 	        .btn-glow { background: linear-gradient(45deg, #E83E8C, #D4AF37); border: none; color: white; padding: 12px 30px; border-radius: 30px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(232, 62, 140, 0.4); width: 100%; }
 	        .btn-glow:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6); color: white; }
 	        .section-title { color: #D4AF37; font-size: 1.2rem; font-weight: 600; margin: 30px 0 15px 0; border-bottom: 1px solid rgba(212, 175, 55, 0.3); padding-bottom: 5px; }
 	    	
-			/* Fixes the white background on floating labels */
-			        .form-floating > .form-control:focus ~ label::after, 
-			        .form-floating > .form-control:not(:placeholder-shown) ~ label::after, 
-			        .form-floating > .form-select ~ label::after {
-			            background-color: transparent !important;
+            /* =========================================================
+               THE ULTIMATE FLOATING LABEL & AUTOFILL FIX 
+               ========================================================= */
+            
+            /* 1. Kills the stubborn white background box behind labels completely */
+            .form-floating > label,
+            .form-floating > label::after {
+                background-color: transparent !important;
+            }
+            
+            /* 2. Keeps labels pink when focused, autofilled, or manually filled */
+            .form-floating > .form-control:focus ~ label,
+            .form-floating > .form-control:not(:placeholder-shown) ~ label,
+            .form-floating > .form-control:-webkit-autofill ~ label,
+            .form-floating > .form-select:focus ~ label,
+            .form-floating > .form-select.is-filled ~ label {
+                color: #E83E8C !important;
+                opacity: 1 !important;
+            }
+
+            /* 3. Forces Chrome Autofill to stay dark and match your glassmorphism */
+            input:-webkit-autofill,
+            input:-webkit-autofill:hover, 
+            input:-webkit-autofill:focus, 
+            input:-webkit-autofill:active {
+                -webkit-box-shadow: 0 0 0 50px rgba(0, 0, 0, 0.7) inset !important;
+                -webkit-text-fill-color: #ffffff !important;
+                transition: background-color 5000s ease-in-out 0s;
+            }
+            
+            /* Ensures Dropdown text is bright white like regular inputs */
+            select.form-select {
+                color: #ffffff !important;
+            }
+			
+			/* Forces all idle floating labels to be a bright, visible gray */
+			        .form-floating > label,
+			        .form-floating > .form-select ~ label {
+			            color: #a0aec0 !important;
+			            opacity: 1 !important;
 			        }
-		
 		</style>
-		
-		
 </head>
 <body>
 <div class="container">
@@ -48,23 +87,23 @@
                     
 					<div class="section-title"><i class="fa-solid fa-handshake"></i> Sponsorship Details</div>
 					                    
-					                    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-					                    
-					                    <div class="row g-3">
-					                        <div class="col-12">
-					                            <div class="form-floating">
-					                                <select class="form-select" th:field="*{sponsorshipType}" id="sponsorTier" required>
-					                                    <option value="" selected disabled>-- Select Sponsorship Tier --</option>
-					                                    
-					                                    <option value="Title Sponsor" th:disabled="${!titleAvailable}" th:text="${titleAvailable ? 'Title Sponsor (₹ 50,000)' : 'Title Sponsor - SOLD OUT'}"></option>
-					                                    <option value="Co-Powered By" th:disabled="${!coPoweredAvailable}" th:text="${coPoweredAvailable ? 'Co-Powered By (₹ 30,000)' : 'Co-Powered By - SOLD OUT'}"></option>
-					                                    <option value="Sponsored By">Sponsored By (₹ 15,000)</option>
-					                                    
-					                                </select>
-					                                <label for="sponsorTier">Sponsorship Tier</label>
-					                            </div>
-					                        </div>
-					                    </div>
+					<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+					
+					<div class="row g-3">
+						<div class="col-12">
+							<div class="form-floating">
+								<select class="form-select" th:field="*{sponsorshipType}" id="sponsorTier" required>
+                                    <option value="" selected hidden>-- Select Sponsorship Tier --</option>
+									
+									<option value="Title Sponsor" th:disabled="${!titleAvailable}" th:text="${titleAvailable ? 'Title Sponsor (₹ 50,000)' : 'Title Sponsor - SOLD OUT'}"></option>
+									<option value="Co-Powered By" th:disabled="${!coPoweredAvailable}" th:text="${coPoweredAvailable ? 'Co-Powered By (₹ 30,000)' : 'Co-Powered By - SOLD OUT'}"></option>
+									<option value="Sponsored By">Sponsored By (₹ 15,000)</option>
+									
+								</select>
+								<label for="sponsorTier">Sponsorship Tier</label>
+							</div>
+						</div>
+					</div>
 
                     <div class="section-title"><i class="fa-solid fa-building"></i> Business Information</div>
                     <div class="row g-3">
@@ -74,10 +113,11 @@
                                 <label for="bName">Business Name</label>
                             </div>
                         </div>
+
                         <div class="col-md-6">
 							<div class="form-floating">
-							    <select class="form-select" th:field="*{businessType}" id="bType" required onchange="checkOther()">
-							        <option value="" selected disabled>-- Select Type --</option>
+                                <select class="form-select" th:field="*{businessType}" id="businessType" required onchange="checkOther()">
+                                    <option value="" selected hidden>-- Select Type --</option>
 							        <option value="IT / Technology">IT / Technology</option>
 							        <option value="Retail / E-commerce">Retail / E-commerce</option>
 							        <option value="Manufacturing">Manufacturing</option>
@@ -86,12 +126,12 @@
 							        <option value="Finance / Consulting">Finance / Consulting</option>
 							        <option value="Other">Other</option>
 							    </select>
-							    <label for="bType">Business Type</label>
-							<div class="form-floating mt-2" id="otherTypeDiv" style="display: none;">
+							    <label for="businessType">Business Type</label>
+                            </div> <div class="form-floating mt-2" id="otherTypeDiv" style="display: none;">
 							    <input type="text" class="form-control" id="otherBType" placeholder="Enter your business type" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff;" />
 							    <label for="otherBType">Enter your business type</label>
 							</div>
-                        <div class="col-md-6">
+                        </div> <div class="col-md-6">
                             <div class="form-floating">
                                 <input type="email" class="form-control" th:field="*{email}" id="email" placeholder="Email" required />
                                 <label for="email">Official Email</label>
@@ -115,42 +155,40 @@
                     </div>
 					
 					<div class="section-title"><i class="fa-solid fa-qrcode"></i> Payment Details</div>
-					                    <div class="row g-3">
-					                        <div class="col-12 text-center mb-3">
-					                            <p style="color: #F8BBD0; font-size: 0.95rem;">Please scan the QR code to pay your selected sponsorship amount, then upload the receipt below.</p>
-					                            
-					                            <img th:src="@{/images/qrcode.jpeg}" alt="Payment QR Code" 
-					                                 style="max-width: 200px; border-radius: 12px; border: 3px solid #D4AF37; padding: 10px; background: white; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);">
-					                        
-													 <div style="margin-top: 10px; color: #333; font-weight: 600; font-size: 0.95rem;">
-													                                 Disha Tiwari<br>
-													                                 <span style="color: var(--primary-glow); font-family: monospace; font-size: 1rem;">tdisha934@okicici</span>
-													                             </div>
-												 </div>
-					                        
-												 <div class="alert mb-4" style="background: rgba(255, 51, 102, 0.1); border: 1px solid #ff3366; color: white; text-align: left; font-size: 0.9rem; border-radius: 12px;">
-												 					    <strong>
-												 					        <i class="fa-solid fa-triangle-exclamation" style="color: #ff3366;"></i> 
-												 					        <span style="color: #ff3366; font-size: 1rem;">Important Note:</span>
-												 					    </strong><br>
-												 					    While doing payment, in the "Note" or "Remark" section of your app, please write your name and number in this exact format:<br>
-												 					    <span style="color: #ff3366; font-family: monospace; font-size: 1.1rem; font-weight: bold; display: block; margin-top: 8px; text-align: center; letter-spacing: 1px;">
-												 					        Full name || Number
-												 					    </span>
-												 					</div>
-					                        <div class="col-md-6">
-					                            <div class="form-floating">
-					                                <input type="text" class="form-control" th:field="*{transactionId}" id="txnId" placeholder="Transaction ID" required />
-					                                <label for="txnId">Transaction / UTR ID</label>
-					                            </div>
-					                        </div>
-					                        
-					                        <div class="col-md-6">
-					                            <label class="form-label" style="color: #a0aec0; font-size: 0.9rem;">Upload Payment Screenshot</label>
-					                            <input type="file" class="form-control" id="paymentUpload" accept="image/png, image/jpeg, image/webp" required>
-					                            <input type="hidden" th:field="*{paymentScreenshotBase64}" id="paymentBase64Input">
-					                        </div>
-					                    </div>
+                    <div class="row g-3">
+                        <div class="col-12 text-center mb-3">
+                            <p style="color: #F8BBD0; font-size: 0.95rem;">Please scan the QR code to pay your selected sponsorship amount, then upload the receipt below.</p>
+                            
+                            <img th:src="@{/images/qrcode.jpeg}" alt="Payment QR Code" 
+                                 style="max-width: 200px; border-radius: 12px; border: 3px solid #D4AF37; padding: 10px; background: white; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);">
+                        
+							 <div style="margin-top: 10px; color: #333; font-weight: 600; font-size: 0.95rem;">
+                                Disha Tiwari<br>
+                                <span style="color: var(--primary-glow); font-family: monospace; font-size: 1rem;">tdisha934@okicici</span>
+                             </div>
+						 </div>
+                        
+						 <div class="alert mb-4" style="background: rgba(255, 51, 102, 0.1); border: 1px solid #ff3366; color: white; text-align: left; font-size: 0.9rem; border-radius: 12px;">
+		                    <strong>
+		                        <i class="fa-solid fa-triangle-exclamation" style="color: #ff3366;"></i> 
+		                        <span style="color: #ff3366; font-size: 1rem;">Important Note:</span>
+		                    </strong><br>
+		                    While doing payment, in the "Note" or "Remark" section of your app, please write your name and number in this exact format:<br>
+		                    <span style="color: #ff3366; font-family: monospace; font-size: 1.1rem; font-weight: bold; display: block; margin-top: 8px; text-align: center; letter-spacing: 1px;">
+		                        Full name || Number
+		                    </span>
+		                </div>
+
+						<div class="col-md-6">
+						                            <label for="txnId" class="form-label" style="color: #a0aec0; font-size: 0.9rem; margin-bottom: 8px;">Transaction / UTR ID</label>
+						                            <input type="text" class="form-control" th:field="*{transactionId}" id="txnId" placeholder="Enter Transaction ID" required style="padding: 12px; font-size: 1rem;" />
+						                        </div>
+						                        
+						                        <div class="col-md-6">
+						                            <label class="form-label" style="color: #a0aec0; font-size: 0.9rem; margin-bottom: 8px;">Upload Payment Screenshot</label>
+						                            <input type="file" class="form-control" id="paymentUpload" accept="image/png, image/jpeg, image/webp" required style="padding: 12px; font-size: 1rem;">
+						                            <input type="hidden" th:field="*{paymentScreenshotBase64}" id="paymentBase64Input">
+						                        </div>
 
                     <div class="mt-5">
                         <button type="submit" class="btn-glow">Submit Sponsorship Details</button>
@@ -168,47 +206,59 @@
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                // Takes the image data and puts it into the hidden input for Spring Boot
                 document.getElementById('logoBase64Input').value = e.target.result;
             };
             reader.readAsDataURL(file);
         }
     });
-	// --- NEW: Payment Screenshot Script ---
-	    document.getElementById('paymentUpload').addEventListener('change', function(event) {
-	        const file = event.target.files[0];
-	        if (file) {
-	            const reader = new FileReader();
-	            reader.onload = function(e) {
-	                // Takes the payment image data and puts it into the hidden input
-	                document.getElementById('paymentBase64Input').value = e.target.result;
-	            };
-	            reader.readAsDataURL(file);
-	        }
-	    });
-		function checkOther() {
-		        var bType = document.getElementById('bType');
-		        var otherInput = document.getElementById('otherBType');
-		        if (bType.value === 'Other') {
-		            otherInput.style.display = 'block';
-		            otherInput.required = true;
-		        } else {
-		            otherInput.style.display = 'none';
-		            otherInput.required = false;
-		        }
-		    }
 
-		    // This grabs their custom text and puts it into the database
-		    document.querySelector('form').addEventListener('submit', function() {
-		        var bType = document.getElementById('bType');
-		        var otherInput = document.getElementById('otherBType');
-		        if (bType.value === 'Other') {
-		            var newOption = document.createElement('option');
-		            newOption.value = otherInput.value;
-		            newOption.selected = true;
-		            bType.appendChild(newOption);
-		        }
-		    });
+    document.getElementById('paymentUpload').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('paymentBase64Input').value = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function checkOther() {
+        // Changed ID to match Thymeleaf output
+        var bType = document.getElementById('businessType');
+        var otherInput = document.getElementById('otherBType');
+        if (bType.value === 'Other') {
+            otherInput.style.display = 'block';
+            otherInput.required = true;
+        } else {
+            otherInput.style.display = 'none';
+            otherInput.required = false;
+        }
+    }
+
+    document.querySelector('form').addEventListener('submit', function() {
+        // Changed ID to match Thymeleaf output
+        var bType = document.getElementById('businessType');
+        var otherInput = document.getElementById('otherBType');
+        if (bType.value === 'Other') {
+            var newOption = document.createElement('option');
+            newOption.value = otherInput.value;
+            newOption.selected = true;
+            bType.appendChild(newOption);
+        }
+    });
+
+    // Forcefully locks the pink highlight on Dropdowns after selection
+    document.addEventListener("DOMContentLoaded", function() {
+        const selects = document.querySelectorAll(".form-select");
+        selects.forEach(select => {
+            select.addEventListener("change", function() {
+                if (this.value !== "") {
+                    this.classList.add("is-filled");
+                }
+            });
+        });
+    });
 </script>
 </body>
 </html>
