@@ -266,7 +266,7 @@ public class RegistrationController {
             
             // Send Email
             try {
-                emailService.sendSponsorApprovalEmail(sponsor.getEmail(), sponsor.getBusinessName(), sponsor.getSponsorshipType());
+            	emailService.sendSponsorApprovalEmail(sponsor.getEmail(), sponsor.getBusinessName(), sponsor.getSponsorshipType(), "SPN-" + sponsor.getId());
                 sponsor.setEmailSent(true);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -282,10 +282,10 @@ public class RegistrationController {
         return "sponsor-success";
     }
     
- // --- NEW: BULK EMAIL ENDPOINT ---
+ // --- BULK EMAIL FOR ATTENDEES ---
     @PostMapping("/admin/bulk-email")
     @org.springframework.web.bind.annotation.ResponseBody
-    public String sendBulkEmail(@RequestParam("ids") java.util.List<Long> ids, 
+    public String sendBulkEmail(@RequestParam("ids") List<Long> ids, 
                                 @RequestParam("message") String message, 
                                 HttpSession session) {
         if (session.getAttribute("ADMIN_LOGGED_IN") == null) return "Unauthorized";
@@ -294,7 +294,18 @@ public class RegistrationController {
         for (Long id : ids) {
             EventRegistration person = repository.findById(id).orElse(null);
             if (person != null && person.getEmailAddress() != null) {
-                emailService.sendCustomEmail(person.getEmailAddress(), person.getName(), message);
+                
+                // Fallback ID just in case uniqueId is null
+                String finalId = person.getUniqueId() != null ? person.getUniqueId() : "PRIYA-" + person.getId();
+                
+                // FIX: Using 'person' instead of 'p'
+                emailService.sendCustomEmail(
+                    person.getEmailAddress(), 
+                    person.getName(), 
+                    "Registration ID", 
+                    finalId, 
+                    message
+                );
                 successCount++;
             }
         }
@@ -520,7 +531,7 @@ public class RegistrationController {
             Sponsor s = sponsorRepository.findById(id).orElse(null);
             if (s != null && s.getEmail() != null) {
                 // Reusing the custom email method we built earlier
-                emailService.sendCustomEmail(s.getEmail(), s.getBusinessName(), message);
+            	emailService.sendCustomEmail(s.getEmail(), s.getBusinessName(), "Sponsor ID", "SPN-" + s.getId(), message);
                 successCount++;
             }
         }
